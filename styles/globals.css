@@ -1,35 +1,100 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
-    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  overflow: auto !important;
 }
 
-* {
-  box-sizing: border-box;
+:root {
+  --background: #fff;
+  --background-secondary: ;
+
+  --orange-1: #f16432;
+  --orange-2: #ff512f;
+  --orange-3: #f09819;
+  --orange-4: #f09819;
+  --orange-5: #fef1ec;
+
+  --yellow-1: #fca311;
+  --yellow-2: #6a532b;
+
+  --green-1: #00395c;
+
+  --accent-1: #000000;
+  --accent-2: #555555;
+  --accent-3: #6e6e6e;
+  --accent-4: #c4c4c4;
+  --accent-5: #fafafa;
+  --accent-6: #777777;
+  --accent-7: #e7e2e2;
+  --accent-8: #22272b;
+  --accent-9: #c4c4c4;
+  --accent-10: #f5f3f3;
+  --accent-11: #e9e8e8;
+  --accent-12: #f0f0f0;
 }
 
-main {
-  padding: 5rem 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+[data-theme="dark"] {
+  --background: #22272b;
+  --background-secondary: ;
+
+  --orange-1: #f16432;
+  --orange-2: #ff512f;
+  --orange-3: #f09819;
+  --orange-4: #6e3f31;
+  --orange-5: #5e392c;
+
+  --yellow-1: #fca311;
+  --yellow-2: #6a532b;
+
+  --green-1: #e1e6e9;
+
+  --accent-1: #ffffff;
+  --accent-2: #8e8e8e;
+  --accent-3: #4c5155;
+  --accent-4: #4c5155;
+  --accent-5: #ffffff;
+  --accent-6: #c4c4c4;
+  --accent-7: #4c5155;
+  --accent-8: #c4c4c4;
+  --accent-9: #8e8e8e;
+  --accent-10: #4c5155;
+  --accent-11: #3b3b3b;
+  --accent-12: #8e8e8e;
 }
 
-code {
-  background: #fafafa;
-  border-radius: 5px;
-  padding: 0.75rem;
-  font-family: Menlo, Monaco, Lucida Console, Courier New, monospace;
+body > footer {
+  position: sticky;
+  top: 100vh;
 }
 
-.container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.dark-teal-bg {
+  background: linear-gradient(
+      286.11deg,
+      #000000 1.15%,
+      rgba(0, 0, 0, 0.775528) 51.18%,
+      rgba(0, 0, 0, 0) 124.84%,
+      rgba(0, 0, 0, 0.90431) 124.84%
+    ),
+    linear-gradient(90deg, #70e1f5 0%, #ffd194 100%);
+}
+
+.dark-blue-bg {
+  background: linear-gradient(
+      281.38deg,
+      #000000 -5.36%,
+      rgba(0, 0, 0, 0.839283) 44.25%,
+      rgba(0, 0, 0, 0) 131.26%
+    ),
+    linear-gradient(90deg, #1a2980 0%, #26d0ce 100%);
+}
+
+.dark-yellow-bg {
+  background: linear-gradient(
+      279.93deg,
+      #000000 -14.2%,
+      rgba(0, 0, 0, 0) 151.61%
+    ),
+    linear-gradient(90deg, #f7941e 0%, #004e8f 100%);
 }
