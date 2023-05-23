@@ -1,15 +1,31 @@
 import Head from "next/head";
 import { ChevronDownIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
-import { Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import ThemeChanger from "src/components/ThemeChanger";
 import Modal from "@components/Modal";
+import useGetOrders from "@hooks/queries/useGetOrders";
+import { Token } from "@hooks/queries/useGetTokens";
+import { useGetOrdersSubscription } from "@hooks/queries/useGetOrderSubscription";
+
+export type SwapType = {
+  from: Token | null;
+  to: Token | null;
+};
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [type, setType] = useState("from");
-  const [swap, setSwap] = useState({ from: "", to: "" });
+  const [swap, setSwap] = useState<SwapType>({ from: null, to: null });
+
+  const getOrders = useGetOrders({
+    baseToken: swap.from?.address ?? "",
+    quoteToken: swap.to?.address ?? "",
+  });
+
+  useGetOrdersSubscription({
+    baseToken: swap.from?.address ?? "",
+    quoteToken: swap.to?.address ?? "",
+  });
 
   function closeModal() {
     setIsOpen(false);
@@ -30,8 +46,8 @@ export default function Home() {
         <div className="flex justify-end items-center p-4">
           <ThemeChanger />
         </div>
-        <main className="flex justify-center items-center gap-4 min-h-[85vh] relative flex-col py-5 px-3">
-          <div className="rounded-xl border border-th-accent-4 bg-th-background p-4  w-full max-w-lg flex flex-col my-4">
+        <main className="flex flex-col justify-start items-center gap-4 min-h-[85vh] relative flex-col py-5 px-5">
+          <div className="rounded-xl border border-th-accent-4 bg-th-background p-4 w-full max-w-lg flex flex-col my-4">
             <div className="rounded-md relative border border-th-accent-4 bg-th-background px-3 py-4 my-4 flex justify-between items-center w-full">
               <label className="absolute p-1 text-[0.65rem] -top-3 bg-th-background font-mont">
                 From
@@ -41,12 +57,9 @@ export default function Home() {
                 onClick={() => openModal("from")}
                 className="flex text-sm justify-start items-center font-mont gap-2 font-semibold bg-th-orange-2 py-2 px-4 rounded-full text-white cursor-pointer bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
-                Select a token
+                {swap.from?.name ?? "Select a token"}
                 <ChevronDownIcon className="w-4 h-4" />
               </button>
-              {/*
-              <p className="font-semibold font-mont">0.00</p>
-							*/}
             </div>
 
             <div className="p-1.5 bg-th-orange-5  self-center flex justify-center items-center rounded-full">
@@ -62,7 +75,7 @@ export default function Home() {
                 onClick={() => openModal("to")}
                 className="flex text-sm justify-start items-center font-mont gap-2 font-semibold bg-th-orange-2 py-2 px-4 rounded-full text-white cursor-pointer bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
-                Select a token
+                {swap.to?.name ?? "Select a token"}
                 <ChevronDownIcon className="w-4 h-4" />
               </button>
               <Modal
@@ -72,14 +85,35 @@ export default function Home() {
                 type={type}
                 closeModal={closeModal}
               />
-              {/*
-              <p className="font-semibold font-mont">0.00</p>
-							*/}
             </div>
-
-            <button className="w-full font-semibold flex justify-center items-center text-th-orange-2 bg-th-orange-5 py-4 font-mont text-sm rounded-full my-4">
-              Check Orders
-            </button>
+          </div>
+          <div className="flex flex-col w-full justify-start border-th-accent-4 border items-start overflow-x-auto scrollbar-thin  scrollbar scrollbar-thumb-gray-700 hover:scrollbar-thumb-gray-500 scrollbar-thumb-rounded-full bg-th-background gap-2 w-full overflow-scroll">
+            <div className="flex flex-col text-xs font-mont justify-start items-start w-full">
+              <div className="flex w-full justify-start items-start py-2">
+                <div className="w-[48%] flex gap-2 justify-start items-start whitespace-nowrap min-w-[400px]">
+                  <p className="pl-3 text-th-accent-1 min-w-[50px] w-[10%]">
+                    Price(USD)
+                  </p>
+                  <p className="text-th-accent-1 min-w-[150px] w-[45%] flex justify-end items-center">
+                    Quantity(USD)
+                  </p>
+                  <p className="pr-3 text-th-accent-1 min-w-[150px] w-[45%] flex justify-end items-center ">
+                    Total(USD)
+                  </p>
+                </div>
+                <div className="w-[48%] flex justify-start items-start whitespace-nowrap min-w-[400px]">
+                  <p className="pl-3 text-th-accent-1 min-w-[150px] w-[45%] flex justify-start items-center">
+                    Total(USD)
+                  </p>
+                  <p className="text-th-accent-1 min-w-[150px] w-[45%] flex justify-start items-center">
+                    Quantity(USD)
+                  </p>
+                  <p className="pr-3 text-th-accent-1 min-w-[50px] w-[10%]">
+                    Price(USD)
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </main>
       </div>

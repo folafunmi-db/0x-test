@@ -10,7 +10,16 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import * as React from "react";
 
 function Application({ Component, pageProps }: any) {
-  const [queryClient] = React.useState(() => new QueryClient());
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: Infinity,
+          },
+        },
+      })
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -31,9 +31,7 @@ export const getTokens = async (): Promise<ResType> => {
   const response = await axios.get(
     `https://tokens.coingecko.com/uniswap/all.json`,
     {
-      headers: {
-        "0x-api-key": "8dee467c-c831-436a-9f0c-34cab0f5c22b",
-      },
+      headers: {},
     }
   );
 

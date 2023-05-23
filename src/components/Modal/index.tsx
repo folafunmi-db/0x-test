@@ -1,18 +1,19 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Transition, Dialog } from "@headlessui/react";
 import useGetTokens from "@hooks/queries/useGetTokens";
 import Image from "next/image";
 import { v4 as uuid } from "uuid";
 import { List } from "react-virtualized";
+import { SwapType } from "pages";
 
 type Props = {
   type: string;
   closeModal: () => void;
+  reset?: () => void;
   isOpen: boolean;
-
-  swap: { from: string; to: string };
-  setSwap: React.Dispatch<React.SetStateAction<{ from: string; to: string }>>;
+  swap: SwapType;
+  setSwap: React.Dispatch<React.SetStateAction<SwapType>>;
 };
 
 const Modal: React.FC<Props> = ({
@@ -21,19 +22,28 @@ const Modal: React.FC<Props> = ({
   isOpen,
   type,
   closeModal,
+  reset,
 }) => {
   const [search, setSearch] = useState("");
 
   const getTokens = useGetTokens();
 
   const results =
-    getTokens.data?.tokens?.filter((i) =>
-      i.name.toLowerCase().includes(search)
+    getTokens.data?.tokens?.filter(
+      (i) =>
+        i.name.toLowerCase().includes(search) ||
+        i.address.toLowerCase().includes(search)
     ) ?? [];
 
   const listHeight = 300;
   const rowHeight = 60;
   const rowWidth = 400;
+
+  useEffect(() => {
+    if (reset) {
+      reset();
+    }
+  }, []);
 
   function renderRow({ index, style }: any) {
     return results[index]?.name ? (
@@ -42,10 +52,10 @@ const Modal: React.FC<Props> = ({
         style={style}
         className="w-full flex p-2.5 justify-start items-center rounded hover:bg-gray-100 cursor-pointer transition"
         onClick={() => {
-          if (type === "from ") {
-            setSwap({ ...swap, from: "" });
+          if (type === "from") {
+            setSwap({ ...swap, from: results[index] });
           } else {
-            setSwap({ ...swap, to: "" });
+            setSwap({ ...swap, to: results[index] });
           }
           closeModal();
           setSearch("");
@@ -55,7 +65,7 @@ const Modal: React.FC<Props> = ({
           <Image src={results[index]?.logoURI ?? "#"} width={30} height={30} />
         )}
         <div className=" flex-col justify-center items-start ml-2">
-          <p className="font-mont font-semibold text-th-accent-1 text-sm">
+          <p className="font-mont font-semibold text-gray-500 text-sm">
             {results[index]?.symbol ?? "Unavailable"}
           </p>
           <p className="font-mont font-normal text-gray-500 text-sm">
@@ -124,7 +134,7 @@ const Modal: React.FC<Props> = ({
                   <MagnifyingGlassIcon className="text-th-accent-6 w-6 h-6" />
                   <input
                     className="text-th-accent-6 w-full h-9 ml-2 font-mont bg-transparent focus:outline-none "
-                    placeholder="Search name or paste address"
+                    placeholder="Search name"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
