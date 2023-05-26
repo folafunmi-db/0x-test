@@ -1,6 +1,7 @@
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import { OrdersResType } from "./useGetOrders";
+import { v4 as uuid } from "uuid";
 
 type SubscribeEvent = {
   type: "subscribe";
@@ -12,7 +13,7 @@ type UpdateEvent = {
   type: "update";
   channel: string;
   requestId: string;
-  payload: Partial<OrdersResType>;
+  payload: Partial<OrdersResType["asks"]["records"]>;
 };
 
 type WebSocketEvent = SubscribeEvent | UpdateEvent;
@@ -42,15 +43,15 @@ export const useGetOrdersSubscription = ({ quoteToken, baseToken }: Props) => {
           queryClient.setQueryData<OrdersResType>(
             [data.channel, baseToken, quoteToken] as QueryKey,
             (oldData) => {
-              console.log({ data, oldData });
+              // console.log({ data, oldData });
               return {
                 asks: {
                   ...oldData?.asks,
-                  records: [...(oldData?.asks?.records ?? [])],
+                  records: [...data.payload, ...(oldData?.asks?.records ?? [])],
                 },
                 bids: {
                   ...oldData?.bids,
-                  records: [...(oldData?.bids?.records ?? [])],
+                  records: [...data.payload, ...(oldData?.bids?.records ?? [])],
                 },
               } as OrdersResType;
             }
@@ -65,14 +66,16 @@ export const useGetOrdersSubscription = ({ quoteToken, baseToken }: Props) => {
           JSON.stringify({
             type: "subscribe",
             channel: "orders",
-            requestId: "",
+            requestId: uuid(),
           })
         );
       }
     };
 
     return () => {
-      websocket.current?.close();
+      if (websocket.current?.readyState === 1) {
+        websocket.current?.close();
+      }
     };
   }, [queryClient, baseToken, quoteToken]);
 };

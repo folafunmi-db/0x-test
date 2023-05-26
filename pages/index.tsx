@@ -6,6 +6,7 @@ import Modal from "@components/Modal";
 import useGetOrders from "@hooks/queries/useGetOrders";
 import { Token } from "@hooks/queries/useGetTokens";
 import { useGetOrdersSubscription } from "@hooks/queries/useGetOrderSubscription";
+import { v4 as uuid } from "uuid";
 
 export type SwapType = {
   from: Token | null;
@@ -42,12 +43,12 @@ export default function Home() {
         <title>0x Order</title>
       </Head>
 
-      <div className="min-h-screen relative">
+      <div className="min-h-screen relative bg-th-background">
         <div className="flex justify-end items-center p-4">
           <ThemeChanger />
         </div>
         <main className="flex flex-col justify-start items-center gap-4 min-h-[85vh] relative flex-col py-5 px-5">
-          <div className="rounded-xl border border-th-accent-4 bg-th-background p-4 w-full max-w-lg flex flex-col my-4">
+          <div className="shadow-md hover:shadow-xl transition rounded-xl border border-th-accent-4 bg-th-background p-4 w-full max-w-lg flex flex-col my-4">
             <div className="rounded-md relative border border-th-accent-4 bg-th-background px-3 py-4 my-4 flex justify-between items-center w-full">
               <label className="absolute p-1 text-[0.65rem] -top-3 bg-th-background font-mont">
                 From
@@ -55,7 +56,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => openModal("from")}
-                className="flex text-sm justify-start items-center font-mont gap-2 font-semibold bg-th-orange-2 py-2 px-4 rounded-full text-white cursor-pointer bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="flex text-sm justify-start items-center font-mont gap-2 font-semibold bg-th-orange-2 py-2 px-4 rounded text-white cursor-pointer bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {swap.from?.name ?? "Select a token"}
                 <ChevronDownIcon className="w-4 h-4" />
@@ -73,7 +74,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => openModal("to")}
-                className="flex text-sm justify-start items-center font-mont gap-2 font-semibold bg-th-orange-2 py-2 px-4 rounded-full text-white cursor-pointer bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="flex text-sm justify-start items-center font-mont gap-2 font-semibold bg-th-orange-2 py-2 px-4 rounded text-white cursor-pointer bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {swap.to?.name ?? "Select a token"}
                 <ChevronDownIcon className="w-4 h-4" />
@@ -87,30 +88,102 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="flex flex-col w-full justify-start border-th-accent-4 border items-start overflow-x-auto scrollbar-thin  scrollbar scrollbar-thumb-gray-700 hover:scrollbar-thumb-gray-500 scrollbar-thumb-rounded-full bg-th-background gap-2 w-full overflow-scroll">
+          <div className="flex flex-col w-full justify-start items-start md:overflow-x-auto scrollbar-thin scrollbar scrollbar-thumb-gray-700 hover:scrollbar-thumb-gray-500 scrollbar-thumb-rounded-full bg-th-background md:gap-2">
             <div className="flex flex-col text-xs font-mont justify-start items-start w-full">
-              <div className="flex w-full justify-start items-start py-2">
-                <div className="w-[48%] flex gap-2 justify-start items-start whitespace-nowrap min-w-[400px]">
-                  <p className="pl-3 text-th-accent-1 min-w-[50px] w-[10%]">
-                    Price(USD)
-                  </p>
-                  <p className="text-th-accent-1 min-w-[150px] w-[45%] flex justify-end items-center">
-                    Quantity(USD)
-                  </p>
-                  <p className="pr-3 text-th-accent-1 min-w-[150px] w-[45%] flex justify-end items-center ">
-                    Total(USD)
-                  </p>
+              <div className="flex flex-col md:flex-row w-full justify-start items-start">
+                <div className="w-full md:w-[50%] border-th-accent-4 border ">
+                  <div className="flex px-3 gap-4 justify-start py-2 items-start w-full">
+                    <p className="text-th-accent-1 min-w-[15px] block w-1/3 truncate">
+                      Price(USD)
+                    </p>
+                    <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 block md:text-right justify-start md:justify-end items-center truncate">
+                      Quantity(USD)
+                    </p>
+                    <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 block text-right justify-end items-center truncate ">
+                      Total(USD)
+                    </p>
+                  </div>
+                  {getOrders.isLoading ? (
+                    <p className="w-full flex justify-center items-center px-3 py-2">
+                      Loading...
+                    </p>
+                  ) : getOrders.isError ? (
+                    <p className="w-full flex justify-center items-center px-3 py-2">
+                      Error getting orders
+                    </p>
+                  ) : (
+                    getOrders.data?.bids?.records?.slice(0, 20)?.map((item) => (
+                      <div
+                        className="flex px-3 gap-4 justify-start py-2 items-start w-full"
+                        key={uuid()}
+                      >
+                        <p className="text-th-accent-1 min-w-[15px] block w-1/3">
+                          {Number(
+                            item?.order?.makerAmount ?? 0
+                          ).toLocaleString()}
+                        </p>
+                        <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 block justify-start md:justify-end items-center truncate">
+                          {Number(
+                            item?.order?.takerTokenFeeAmount ?? 0
+                          ).toLocaleString()}
+                        </p>
+                        <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 block justify-end items-center truncate">
+                          {Number(
+                            item?.order?.takerAmount ?? 0
+                          ).toLocaleString()}
+                        </p>
+                      </div>
+                    ))
+                  )}
                 </div>
-                <div className="w-[48%] flex justify-start items-start whitespace-nowrap min-w-[400px]">
-                  <p className="pl-3 text-th-accent-1 min-w-[150px] w-[45%] flex justify-start items-center">
-                    Total(USD)
-                  </p>
-                  <p className="text-th-accent-1 min-w-[150px] w-[45%] flex justify-start items-center">
-                    Quantity(USD)
-                  </p>
-                  <p className="pr-3 text-th-accent-1 min-w-[50px] w-[10%]">
-                    Price(USD)
-                  </p>
+                <div className="w-full md:w-[50%] border-th-accent-4 border ">
+                  <div className="flex px-3 gap-4 justify-start py-2 items-start w-full">
+                    <p className="text-th-accent-1 min-w-[15px] w-1/3 block justify-start items-center truncate">
+                      Total(USD)
+                    </p>
+                    <p className="text-th-accent-1 min-w-[15px] w-1/3 block justify-start items-center truncate">
+                      Quantity(USD)
+                    </p>
+                    <p className="text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-end items-center truncate">
+                      Price(USD)
+                    </p>
+                  </div>
+                  {getOrders.isLoading ? (
+                    <p className="w-full flex justify-center items-center px-3 py-2">
+                      Loading...
+                    </p>
+                  ) : getOrders.isError ? (
+                    <p className="w-full flex justify-center items-center px-3 py-2">
+                      Error getting orders
+                    </p>
+                  ) : (
+                    getOrders.data?.asks?.records
+                      ?.slice(0, 20)
+                      ?.map((item, i) => (
+                        <div
+                          className={`flex px-3 gap-4 justify-start py-2 items-start w-full ${
+                            i % 2 ? "brightness-70" : ""
+                          }`}
+                          key={uuid()}
+                        >
+                          <p className="text-th-accent-1 min-w-[15px] w-1/3 block justify-start items-center truncate">
+                            {Number(
+                              item?.order?.makerAmount ?? 0
+                            ).toLocaleString()}
+                          </p>
+                          <p className="text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-start items-center truncate">
+                            {Number(
+                              item?.order?.takerTokenFeeAmount ?? 0
+                            ).toLocaleString()}
+                          </p>
+                          <p className="text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-end items-center truncate">
+                            {Number(
+                              item?.order?.takerAmount ?? 0
+                            ).toLocaleString()}
+                          </p>
+                        </div>
+                      ))
+                  )}
                 </div>
               </div>
             </div>
