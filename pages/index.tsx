@@ -113,33 +113,40 @@ export default function Home() {
                       Error getting orders
                     </p>
                   ) : (
-                    getOrders.data?.bids?.records?.slice(0, 20)?.map((item) => (
-                      <div
-                        className="flex px-3 gap-4 justify-start py-2 items-start w-full relative"
-                        key={uuid()}
-                      >
-                        <DepthIndicator
-                          color="green"
-                          width={50}
-                          direction="r"
-                        />
-                        <p className="font-medium text-green-500 text-th-accent-1 min-w-[15px] block w-1/3 z-[3]">
-                          {Number(
-                            item?.order?.makerAmount ?? 0
-                          ).toLocaleString()}
-                        </p>
-                        <p className="text-th-accent-1 text-right min-w-[15px] z-[3] w-1/3 block justify-start md:justify-end items-center truncate">
-                          {Number(
-                            item?.order?.takerTokenFeeAmount ?? 0
-                          ).toLocaleString()}
-                        </p>
-                        <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 z-[3] block justify-end items-center truncate">
-                          {Number(
-                            item?.order?.takerAmount ?? 0
-                          ).toLocaleString()}
-                        </p>
-                      </div>
-                    ))
+                    getOrders.data?.bids?.records
+                      ?.slice(0, 20)
+                      ?.map((item, i) => (
+                        <div
+                          className="flex px-3 gap-4 justify-start py-2 items-start w-full relative"
+                          key={uuid()}
+                        >
+                          <DepthIndicator
+                            color="green"
+                            width={
+                              (i /
+                                getOrders.data?.bids?.records?.slice(0, 20)
+                                  .length) *
+                              100
+                            }
+                            direction="r"
+                          />
+                          <p className="font-medium text-green-500 text-th-accent-1 min-w-[15px] block w-1/3 z-[3]">
+                            {Number(
+                              item?.order?.makerAmount ?? 0
+                            ).toLocaleString()}
+                          </p>
+                          <p className="text-th-accent-1 text-right min-w-[15px] z-[3] w-1/3 block justify-start md:justify-end items-center truncate">
+                            {Number(
+                              item?.order?.takerTokenFeeAmount ?? 0
+                            ).toLocaleString()}
+                          </p>
+                          <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 z-[3] block justify-end items-center truncate">
+                            {Number(
+                              item?.order?.takerAmount ?? 0
+                            ).toLocaleString()}
+                          </p>
+                        </div>
+                      ))
                   )}
                 </div>
                 <div className="w-full md:w-[50%] border-th-accent-4 border ">
@@ -174,7 +181,12 @@ export default function Home() {
                         >
                           <DepthIndicator
                             color="red"
-                            width={50}
+                            width={
+                              (i /
+                                getOrders.data?.asks?.records?.slice(0, 20)
+                                  .length) *
+                              100
+                            }
                             direction="l"
                           />
                           <p className="text-th-accent-1 min-w-[15px] w-1/3 block justify-start items-center truncate">
