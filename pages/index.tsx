@@ -7,6 +7,7 @@ import useGetOrders from "@hooks/queries/useGetOrders";
 import { Token } from "@hooks/queries/useGetTokens";
 import { useGetOrdersSubscription } from "@hooks/queries/useGetOrderSubscription";
 import { v4 as uuid } from "uuid";
+import DepthIndicator from "@components/DepthIndicator";
 
 export type SwapType = {
   from: Token | null;
@@ -92,8 +93,8 @@ export default function Home() {
             <div className="flex flex-col text-xs font-mont justify-start items-start w-full">
               <div className="flex flex-col md:flex-row w-full justify-start items-start">
                 <div className="w-full md:w-[50%] border-th-accent-4 border ">
-                  <div className="flex px-3 gap-4 justify-start py-2 items-start w-full">
-                    <p className="text-th-accent-1 min-w-[15px] block w-1/3 truncate">
+                  <div className="font-semibold relative flex px-3 gap-4 border-th-accent-4 border-b justify-start py-2 items-start w-full">
+                    <p className="text-th-accent-1 font-medium min-w-[15px] block w-1/3 truncate">
                       Price(USD)
                     </p>
                     <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 block md:text-right justify-start md:justify-end items-center truncate">
@@ -103,7 +104,7 @@ export default function Home() {
                       Total(USD)
                     </p>
                   </div>
-                  {getOrders.isLoading ? (
+                  {getOrders.isLoading && swap.from && swap.to ? (
                     <p className="w-full flex justify-center items-center px-3 py-2">
                       Loading...
                     </p>
@@ -114,20 +115,25 @@ export default function Home() {
                   ) : (
                     getOrders.data?.bids?.records?.slice(0, 20)?.map((item) => (
                       <div
-                        className="flex px-3 gap-4 justify-start py-2 items-start w-full"
+                        className="flex px-3 gap-4 justify-start py-2 items-start w-full relative"
                         key={uuid()}
                       >
-                        <p className="text-th-accent-1 min-w-[15px] block w-1/3">
+                        <DepthIndicator
+                          color="green"
+                          width={50}
+                          direction="r"
+                        />
+                        <p className="font-medium text-green-500 text-th-accent-1 min-w-[15px] block w-1/3 z-[3]">
                           {Number(
                             item?.order?.makerAmount ?? 0
                           ).toLocaleString()}
                         </p>
-                        <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 block justify-start md:justify-end items-center truncate">
+                        <p className="text-th-accent-1 text-right min-w-[15px] z-[3] w-1/3 block justify-start md:justify-end items-center truncate">
                           {Number(
                             item?.order?.takerTokenFeeAmount ?? 0
                           ).toLocaleString()}
                         </p>
-                        <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 block justify-end items-center truncate">
+                        <p className="text-th-accent-1 text-right min-w-[15px] w-1/3 z-[3] block justify-end items-center truncate">
                           {Number(
                             item?.order?.takerAmount ?? 0
                           ).toLocaleString()}
@@ -137,18 +143,18 @@ export default function Home() {
                   )}
                 </div>
                 <div className="w-full md:w-[50%] border-th-accent-4 border ">
-                  <div className="flex px-3 gap-4 justify-start py-2 items-start w-full">
+                  <div className="font-semibold flex px-3 gap-4 justify-start py-2 items-start w-full border-th-accent-4 border-b ">
                     <p className="text-th-accent-1 min-w-[15px] w-1/3 block justify-start items-center truncate">
                       Total(USD)
                     </p>
                     <p className="text-th-accent-1 min-w-[15px] w-1/3 block justify-start items-center truncate">
                       Quantity(USD)
                     </p>
-                    <p className="text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-end items-center truncate">
+                    <p className="font-medium text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-end items-center truncate">
                       Price(USD)
                     </p>
                   </div>
-                  {getOrders.isLoading ? (
+                  {getOrders.isLoading && swap.from && swap.to ? (
                     <p className="w-full flex justify-center items-center px-3 py-2">
                       Loading...
                     </p>
@@ -161,22 +167,27 @@ export default function Home() {
                       ?.slice(0, 20)
                       ?.map((item, i) => (
                         <div
-                          className={`flex px-3 gap-4 justify-start py-2 items-start w-full ${
+                          className={`relative flex px-3 gap-4 justify-start py-2 items-start w-full ${
                             i % 2 ? "brightness-70" : ""
                           }`}
                           key={uuid()}
                         >
+                          <DepthIndicator
+                            color="red"
+                            width={50}
+                            direction="l"
+                          />
                           <p className="text-th-accent-1 min-w-[15px] w-1/3 block justify-start items-center truncate">
                             {Number(
                               item?.order?.makerAmount ?? 0
                             ).toLocaleString()}
                           </p>
-                          <p className="text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-start items-center truncate">
+                          <p className="text-th-accent-1 min-w-[15px] w-1/3 text-left block justify-start items-center truncate">
                             {Number(
                               item?.order?.takerTokenFeeAmount ?? 0
                             ).toLocaleString()}
                           </p>
-                          <p className="text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-end items-center truncate">
+                          <p className="font-medium text-red-500 text-th-accent-1 min-w-[15px] w-1/3 text-right block justify-end items-center truncate">
                             {Number(
                               item?.order?.takerAmount ?? 0
                             ).toLocaleString()}

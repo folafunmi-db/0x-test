@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import api from "@services/api";
+import toast from "react-hot-toast";
 
 export type OrdersResType = {
   bids: Asks;
@@ -83,7 +84,7 @@ const useGetOrders = ({ quoteToken, baseToken }: Props) => {
       enabled: !!baseToken && !!quoteToken,
       onSuccess: () => {},
       onError: (err: AxiosError) => {
-        console.log(err.message);
+        toast.error(err.message);
       },
     }
   );

@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "react-hot-toast";
 
 import * as React from "react";
 
@@ -25,6 +26,7 @@ function Application({ Component, pageProps }: any) {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ThemeProvider defaultTheme="system">
+          <Toaster />
           <Component {...pageProps} />
         </ThemeProvider>
       </Hydrate>
